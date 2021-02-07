@@ -71,6 +71,49 @@ router.post(
 );
 
 /**
+ * @type          PUT
+ * @route         /todo/update?id=:id
+ * @description   Update ToDo item
+ * @access        Private
+ */
+router.put('/update', userAuth, async (req, res) => {
+    try {
+        const { id } = req.query;
+        const userID = req.user.id;
+        const updates = req.body;
+        const options = {
+            new: true,
+        };
+
+        // TODO Update item in ToDo's table
+        await ToDo.findByIdAndUpdate(id, updates, options);
+
+        // TODO Return JWT
+        const payload = {
+            user: {
+                id: userID,
+            },
+        };
+        jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
+            if (error) throw error;
+
+            return res.status(200).json({
+                status: true,
+                token,
+                message: 'ToDo deleted successfully.',
+            });
+        });
+    } catch (error) {
+        console.log(`${error.message}`.red);
+
+        return res.status(500).json({
+            status: false,
+            message: 'Internal server error!',
+        });
+    }
+});
+
+/**
  * @type          DELETE
  * @route         /todo/delete?id=:id
  * @description   Delete ToDo item
@@ -81,11 +124,12 @@ router.delete('/delete', userAuth, async (req, res) => {
         const { id } = req.query;
         const userID = req.user.id;
 
-        // TODO Add new ToDo item to user's table
+        // TODO Delete ToDo item from User's table
         const updatedUser = await User.findByIdAndUpdate(userID, {
             $pull: { todoList: id },
         });
 
+        // TODO Delete item from ToDo's table
         await ToDo.findByIdAndDelete(id);
 
         // TODO Return JWT

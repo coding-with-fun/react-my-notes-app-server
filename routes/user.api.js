@@ -38,12 +38,12 @@ router.get('/details', userAuth, async (req, res) => {
 });
 
 /**
- * @type          PATCH
+ * @type          PUT
  * @route         /user/update
  * @description   Update user
  * @access        Private
  */
-router.patch('/update', userAuth, async (req, res) => {
+router.put('/update', userAuth, async (req, res) => {
     try {
         const userID = req.user.id;
         const updates = req.body;
