@@ -9,6 +9,7 @@ require('colors');
 require('dotenv').config();
 
 const router = express.Router();
+const User = require('../models/model.user');
 
 /**
  * @type        POST
@@ -43,21 +44,66 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     status: false,
-                    error: {
-                        msg: errors.errors[0].msg,
-                    },
+                    message: errors.errors[0].msg,
                 });
             }
+
+            const { name, username, password, confirmPassword } = req.body;
+
+            // TODO Confirm password
+            if (password !== confirmPassword) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'Passwords does not match.',
+                });
+            }
+
+            // TODO Check if user exists
+            const existingUser = await User.findOne({
+                username,
+            });
+            if (existingUser) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'User already exists.',
+                });
+            }
+
+            // TODO Encrypt password
+            const salt = await bcrypt.genSalt();
+            const hashPassword = await bcrypt.hash(password, salt);
+
+            // TODO Create new user
+            const newUser = new User({
+                name,
+                username,
+                password: hashPassword,
+            });
+
+            await newUser.save();
+
+            // TODO Return JWT
+            const payload = {
+                user: {
+                    id: newUser._id,
+                },
+            };
+
+            jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
+                if (error) throw error;
+
+                return res.status(200).json({
+                    status: true,
+                    token,
+                    message: 'User created successfully.',
+                });
+            });
         } catch (error) {
             console.log(`${error.message}`.red);
 
             return res.status(500).json({
                 status: false,
-                error: [
-                    {
-                        msg: 'Internal server error!',
-                    },
-                ],
+                message: 'Internal server error!',
             });
         }
     }
