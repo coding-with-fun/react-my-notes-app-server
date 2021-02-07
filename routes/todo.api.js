@@ -86,6 +86,8 @@ router.delete('/delete', userAuth, async (req, res) => {
             $pull: { todoList: id },
         });
 
+        await ToDo.findByIdAndDelete(id);
+
         // TODO Return JWT
         const payload = {
             user: {
