@@ -77,7 +77,6 @@ router.post(
                 username,
                 password: hashPassword,
             });
-
             await newUser.save();
 
             // TODO Return JWT
@@ -86,7 +85,6 @@ router.post(
                     id: newUser._id,
                 },
             };
-
             jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
                 if (error) throw error;
 

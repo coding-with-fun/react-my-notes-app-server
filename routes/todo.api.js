@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
 require('colors');
@@ -31,32 +32,32 @@ router.post(
 
             const { content } = req.body;
             const userID = req.user.id;
-            const options = {
-                fields: {
-                    password: 0,
-                },
-                new: true,
-            };
 
             // TODO Create new ToDo item
             const newToDo = new ToDo({
                 content,
             });
-
             await newToDo.save();
 
-            const newUserData = await User.findByIdAndUpdate(
-                userID,
-                {
-                    $push: { todoList: newToDo._id },
-                },
-                options
-            ).populate('todoList', '_id content isCompleted');
+            // TODO Add new ToDo item to user's table
+            const updatedUser = await User.findByIdAndUpdate(userID, {
+                $push: { todoList: newToDo._id },
+            });
 
-            return res.status(200).json({
-                status: true,
-                data: newUserData,
-                message: 'New ToDo added successfully.',
+            // TODO Return JWT
+            const payload = {
+                user: {
+                    id: updatedUser._id,
+                },
+            };
+            jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
+                if (error) throw error;
+
+                return res.status(200).json({
+                    status: true,
+                    token,
+                    message: 'New ToDo added successfully.',
+                });
             });
         } catch (error) {
             console.log(`${error.message}`.red);

@@ -8,6 +8,7 @@ const userAuth = async (req, res, next) => {
     try {
         const token = req.header('x-auth-token');
 
+        // TODO Check is token is not present
         if (!token) {
             return res.status(401).json({
                 status: false,
@@ -15,6 +16,7 @@ const userAuth = async (req, res, next) => {
             });
         }
 
+        // TODO Verify token
         jwt.verify(token, process.env.JWT_SECRET, async (error, decoded) => {
             if (error) {
                 return res.status(401).json({
@@ -22,8 +24,8 @@ const userAuth = async (req, res, next) => {
                     message: 'Token is not valid.',
                 });
             } else {
+                // TODO Check if user exists
                 const existingUser = await User.findById(decoded.user.id);
-
                 if (!existingUser) {
                     return res.status(404).json({
                         status: false,
@@ -37,6 +39,7 @@ const userAuth = async (req, res, next) => {
         });
     } catch (error) {
         console.log(`${error.message}`.red);
+
         return res.status(500).json({
             status: false,
             message: 'Internal server error!!',
