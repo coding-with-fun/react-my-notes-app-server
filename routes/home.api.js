@@ -40,9 +40,13 @@ router.post(
             // TODO Check for errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                const response = errors.errors[0];
                 return res.status(400).json({
                     status: false,
-                    body: errors.errors[0],
+                    data: {
+                        parameter: response.param,
+                        message: response.msg,
+                    },
                 });
             }
 
@@ -52,7 +56,9 @@ router.post(
             if (password !== confirmPassword) {
                 return res.status(400).json({
                     status: false,
-                    message: 'Passwords does not match.',
+                    data: {
+                        message: 'Passwords does not match.',
+                    },
                 });
             }
 
@@ -63,7 +69,9 @@ router.post(
             if (existingUser) {
                 return res.status(400).json({
                     status: false,
-                    message: 'User already exists.',
+                    data: {
+                        message: 'User already exists.',
+                    },
                 });
             }
 
@@ -90,8 +98,10 @@ router.post(
 
                 return res.status(200).json({
                     status: true,
-                    token,
-                    message: 'User created successfully.',
+                    data: {
+                        token,
+                        message: 'User created successfully.',
+                    },
                 });
             });
         } catch (error) {
@@ -99,7 +109,9 @@ router.post(
 
             return res.status(500).json({
                 status: false,
-                message: 'Internal server error!',
+                data: {
+                    message: 'Internal server error!',
+                },
             });
         }
     }
@@ -130,9 +142,13 @@ router.post(
             // TODO Check for errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                const response = errors.errors[0];
                 return res.status(400).json({
                     status: false,
-                    body: errors.errors[0],
+                    data: {
+                        parameter: response.param,
+                        message: response.msg,
+                    },
                 });
             }
 
@@ -146,7 +162,9 @@ router.post(
             if (!existingUser) {
                 return res.status(404).json({
                     status: false,
-                    message: 'User does not exist.',
+                    data: {
+                        message: 'User does not exist.',
+                    },
                 });
             }
 
@@ -159,7 +177,9 @@ router.post(
             if (!verifyUser) {
                 return res.status(400).json({
                     status: false,
-                    message: 'Invalid credentials.',
+                    data: {
+                        message: 'Invalid credentials.',
+                    },
                 });
             }
 
@@ -174,8 +194,10 @@ router.post(
 
                 return res.status(200).json({
                     status: true,
-                    token,
-                    message: 'User signed in successfully.',
+                    data: {
+                        token,
+                        message: 'User signed in successfully.',
+                    },
                 });
             });
         } catch (error) {
@@ -183,7 +205,9 @@ router.post(
 
             return res.status(500).json({
                 status: false,
-                message: 'Internal server error!',
+                data: {
+                    message: 'Internal server error!',
+                },
             });
         }
     }

@@ -24,9 +24,13 @@ router.post(
             // TODO Check for errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                const response = errors.errors[0];
                 return res.status(400).json({
                     status: false,
-                    body: errors.errors[0],
+                    data: {
+                        parameter: response.param,
+                        message: response.msg,
+                    },
                 });
             }
 
@@ -55,8 +59,10 @@ router.post(
 
                 return res.status(200).json({
                     status: true,
-                    token,
-                    message: 'New Note added successfully.',
+                    data: {
+                        token,
+                        message: 'New Note added successfully.',
+                    },
                 });
             });
         } catch (error) {
@@ -64,7 +70,9 @@ router.post(
 
             return res.status(500).json({
                 status: false,
-                message: 'Internal server error!',
+                data: {
+                    message: 'Internal server error!',
+                },
             });
         }
     }
@@ -85,9 +93,13 @@ router.put(
             // TODO Check for errors
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
+                const response = errors.errors[0];
                 return res.status(400).json({
                     status: false,
-                    body: errors.errors[0],
+                    data: {
+                        parameter: response.param,
+                        message: response.msg,
+                    },
                 });
             }
 
@@ -103,7 +115,9 @@ router.put(
             if (!response) {
                 return res.status(404).json({
                     status: false,
-                    message: 'Item is not present.',
+                    data: {
+                        message: 'Item is not present.',
+                    },
                 });
             }
 
@@ -118,8 +132,10 @@ router.put(
 
                 return res.status(200).json({
                     status: true,
-                    token,
-                    message: 'Note updated successfully.',
+                    data: {
+                        token,
+                        message: 'Note updated successfully.',
+                    },
                 });
             });
         } catch (error) {
@@ -127,7 +143,9 @@ router.put(
 
             return res.status(500).json({
                 status: false,
-                message: 'Internal server error!',
+                data: {
+                    message: 'Internal server error!',
+                },
             });
         }
     }
@@ -154,7 +172,9 @@ router.delete('/delete', userAuth, async (req, res) => {
         if (!response) {
             return res.status(404).json({
                 status: false,
-                message: 'Item is not present.',
+                data: {
+                    message: 'Item is not present.',
+                },
             });
         }
 
@@ -169,8 +189,10 @@ router.delete('/delete', userAuth, async (req, res) => {
 
             return res.status(200).json({
                 status: true,
-                token,
-                message: 'Note deleted successfully.',
+                data: {
+                    token,
+                    message: 'Note deleted successfully.',
+                },
             });
         });
     } catch (error) {
@@ -178,7 +200,9 @@ router.delete('/delete', userAuth, async (req, res) => {
 
         return res.status(500).json({
             status: false,
-            message: 'Internal server error!',
+            data: {
+                message: 'Internal server error!',
+            },
         });
     }
 });

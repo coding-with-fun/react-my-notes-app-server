@@ -12,7 +12,9 @@ const userAuth = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({
                 status: false,
-                message: 'No token, authorization denied.',
+                data: {
+                    message: 'No token, authorization denied.',
+                },
             });
         }
 
@@ -21,7 +23,9 @@ const userAuth = async (req, res, next) => {
             if (error) {
                 return res.status(401).json({
                     status: false,
-                    message: 'Token is not valid.',
+                    data: {
+                        message: 'Token is not valid.',
+                    },
                 });
             } else {
                 // TODO Check if user exists
@@ -29,7 +33,9 @@ const userAuth = async (req, res, next) => {
                 if (!existingUser) {
                     return res.status(404).json({
                         status: false,
-                        message: 'User does not exist.',
+                        data: {
+                            message: 'User does not exist.',
+                        },
                     });
                 }
 
@@ -42,7 +48,9 @@ const userAuth = async (req, res, next) => {
 
         return res.status(500).json({
             status: false,
-            message: 'Internal server error!!',
+            data: {
+                message: 'Internal server error!!',
+            },
         });
     }
 };

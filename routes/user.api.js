@@ -25,15 +25,19 @@ router.get('/details', userAuth, async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            data: existingUser,
-            message: 'User details fetched successfully.',
+            data: {
+                user: existingUser,
+                message: 'User details fetched successfully.',
+            },
         });
     } catch (error) {
         console.log(`${error.message}`.red);
 
         return res.status(500).json({
             status: false,
-            message: 'Internal server error!!',
+            data: {
+                message: 'Internal server error!!',
+            },
         });
     }
 });
@@ -76,8 +80,10 @@ router.put('/update', userAuth, async (req, res) => {
 
             return res.status(200).json({
                 status: true,
-                token,
-                message: 'User updated successfully.',
+                data: {
+                    token,
+                    message: 'User updated successfully.',
+                },
             });
         });
     } catch (error) {
@@ -85,7 +91,9 @@ router.put('/update', userAuth, async (req, res) => {
 
         return res.status(500).json({
             status: false,
-            message: 'Internal server error!!',
+            data: {
+                message: 'Internal server error!!',
+            },
         });
     }
 });
