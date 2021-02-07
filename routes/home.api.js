@@ -9,7 +9,7 @@ require('colors');
 require('dotenv').config();
 
 const router = express.Router();
-const User = require('../models/model.user');
+const User = require('../models/user.model');
 
 /**
  * @type        POST
