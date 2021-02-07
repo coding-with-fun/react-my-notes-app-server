@@ -109,4 +109,88 @@ router.post(
     }
 );
 
+/**
+ * @type Post
+ * @route /signin
+ * @description User SignIn
+ * @access Public
+ */
+router.post(
+    '/signin',
+    [
+        check('username')
+            .notEmpty()
+            .withMessage('Username is required.')
+            .isLength({ min: 5 })
+            .withMessage('Username must be at least 5 characters long.'),
+        check('password')
+            .notEmpty()
+            .withMessage('Please enter password.')
+            .isLength({ min: 5 })
+            .withMessage('Password must be at least 5 chars long.'),
+    ],
+    async (req, res) => {
+        try {
+            // TODO Check for errors
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    status: false,
+                    message: errors.errors[0].msg,
+                });
+            }
+
+            const { username, password } = req.body;
+
+            // TODO Check if user exists
+            const existingUser = await User.findOne({
+                username,
+            });
+
+            if (!existingUser) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'User does not exist.',
+                });
+            }
+
+            // TODO Verify credentials
+            const verifyUser = await bcrypt.compare(
+                password,
+                existingUser.password
+            );
+
+            if (!verifyUser) {
+                return res.status(400).json({
+                    status: false,
+                    message: 'Invalid credentials.',
+                });
+            }
+
+            // TODO Return JWT
+            const payload = {
+                user: {
+                    id: existingUser._id,
+                },
+            };
+            jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
+                if (error) throw error;
+
+                return res.status(200).json({
+                    status: true,
+                    token,
+                    message: 'User signed in successfully.',
+                });
+            });
+        } catch (error) {
+            console.log(`${error.message}`.red);
+
+            return res.status(500).json({
+                status: false,
+                message: 'Internal server error!',
+            });
+        }
+    }
+);
+
 module.exports = router;
