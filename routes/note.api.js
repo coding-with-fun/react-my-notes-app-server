@@ -6,13 +6,13 @@ require('colors');
 
 const router = express.Router();
 const User = require('../models/user.model');
-const ToDo = require('../models/todo.model');
+const Note = require('../models/note.model');
 const userAuth = require('../middleware/auth');
 
 /**
  * @type          POST
- * @route         /todo/create
- * @description   Create new ToDo item
+ * @route         /note/create
+ * @description   Create new Note item
  * @access        Private
  */
 router.post(
@@ -33,15 +33,15 @@ router.post(
             const { content } = req.body;
             const userID = req.user.id;
 
-            // TODO Create new ToDo item
-            const newToDo = new ToDo({
+            // TODO Create new Note item
+            const newNote = new Note({
                 content,
             });
-            await newToDo.save();
+            await newNote.save();
 
-            // TODO Add new ToDo item to user's table
+            // TODO Add new Note item to user's table
             const updatedUser = await User.findByIdAndUpdate(userID, {
-                $push: { todoList: newToDo._id },
+                $push: { noteList: newNote._id },
             });
 
             // TODO Return JWT
@@ -56,7 +56,7 @@ router.post(
                 return res.status(200).json({
                     status: true,
                     token,
-                    message: 'New ToDo added successfully.',
+                    message: 'New Note added successfully.',
                 });
             });
         } catch (error) {
@@ -72,8 +72,8 @@ router.post(
 
 /**
  * @type          PUT
- * @route         /todo/update?id=:id
- * @description   Update ToDo item
+ * @route         /note/update?id=:id
+ * @description   Update Note item
  * @access        Private
  */
 router.put(
@@ -98,8 +98,8 @@ router.put(
                 new: true,
             };
 
-            // TODO Update item in ToDo's table
-            const response = await ToDo.findByIdAndUpdate(id, updates, options);
+            // TODO Update item in Note's table
+            const response = await Note.findByIdAndUpdate(id, updates, options);
             if (!response) {
                 return res.status(404).json({
                     status: false,
@@ -119,7 +119,7 @@ router.put(
                 return res.status(200).json({
                     status: true,
                     token,
-                    message: 'ToDo updated successfully.',
+                    message: 'Note updated successfully.',
                 });
             });
         } catch (error) {
@@ -135,8 +135,8 @@ router.put(
 
 /**
  * @type          DELETE
- * @route         /todo/delete?id=:id
- * @description   Delete ToDo item
+ * @route         /note/delete?id=:id
+ * @description   Delete Note item
  * @access        Private
  */
 router.delete('/delete', userAuth, async (req, res) => {
@@ -144,13 +144,13 @@ router.delete('/delete', userAuth, async (req, res) => {
         const { id } = req.query;
         const userID = req.user.id;
 
-        // TODO Delete ToDo item from User's table
+        // TODO Delete Note item from User's table
         const updatedUser = await User.findByIdAndUpdate(userID, {
-            $pull: { todoList: id },
+            $pull: { noteList: id },
         });
 
-        // TODO Delete item from ToDo's table
-        const response = await ToDo.findByIdAndDelete(id);
+        // TODO Delete item from Note's table
+        const response = await Note.findByIdAndDelete(id);
         if (!response) {
             return res.status(404).json({
                 status: false,
@@ -170,7 +170,7 @@ router.delete('/delete', userAuth, async (req, res) => {
             return res.status(200).json({
                 status: true,
                 token,
-                message: 'ToDo deleted successfully.',
+                message: 'Note deleted successfully.',
             });
         });
     } catch (error) {

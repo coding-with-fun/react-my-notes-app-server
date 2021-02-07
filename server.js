@@ -21,4 +21,5 @@ connectDB();
 // * Defining routes
 app.use('/user', require('./routes/user.api'));
 app.use('/todo', require('./routes/todo.api'));
+app.use('/note', require('./routes/note.api'));
 app.use('/', require('./routes/home.api'));

@@ -144,7 +144,7 @@ router.post(
             });
 
             if (!existingUser) {
-                return res.status(400).json({
+                return res.status(404).json({
                     status: false,
                     message: 'User does not exist.',
                 });

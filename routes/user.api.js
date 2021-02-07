@@ -20,6 +20,7 @@ router.get('/details', userAuth, async (req, res) => {
         const userID = req.user.id;
         const existingUser = await User.findById(userID)
             .populate('todoList', '_id content isCompleted')
+            .populate('noteList', '_id content')
             .select({ password: 0 });
 
         return res.status(200).json({

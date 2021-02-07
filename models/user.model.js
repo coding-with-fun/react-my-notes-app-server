@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
                 ref: 'ToDo',
             },
         ],
-        notesList: [
+        noteList: [
             {
                 type: ObjectId,
                 ref: 'Note',
