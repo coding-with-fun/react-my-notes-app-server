@@ -20,3 +20,4 @@ connectDB();
 
 // * Defining routes
 app.use('/', require('./routes/home.api'));
+app.use('/user', require('./routes/user.api'));

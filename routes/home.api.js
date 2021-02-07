@@ -110,10 +110,10 @@ router.post(
 );
 
 /**
- * @type Post
- * @route /signin
+ * @type        Post
+ * @route       /signin
  * @description User SignIn
- * @access Public
+ * @access      Public
  */
 router.post(
     '/signin',
