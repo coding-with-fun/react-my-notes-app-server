@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./config/db');
 
 require('colors');
 require('dotenv').config();
@@ -13,3 +14,9 @@ app.use(cors());
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}...`.magenta);
 });
+
+// * Connect to MongoDB
+connectDB();
+
+// * Defining routes
+app.use('/', require('./routes/home.api'));
