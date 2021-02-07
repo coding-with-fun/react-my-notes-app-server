@@ -76,42 +76,56 @@ router.post(
  * @description   Update ToDo item
  * @access        Private
  */
-router.put('/update', userAuth, async (req, res) => {
-    try {
-        const { id } = req.query;
-        const userID = req.user.id;
-        const updates = req.body;
-        const options = {
-            new: true,
-        };
+router.put(
+    '/update',
+    [check('content').notEmpty().withMessage('Content is required.')],
+    userAuth,
+    async (req, res) => {
+        try {
+            // TODO Check for errors
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    status: false,
+                    message: errors.errors[0].msg,
+                });
+            }
 
-        // TODO Update item in ToDo's table
-        await ToDo.findByIdAndUpdate(id, updates, options);
+            const { id } = req.query;
+            const userID = req.user.id;
+            const updates = req.body;
+            const options = {
+                new: true,
+            };
 
-        // TODO Return JWT
-        const payload = {
-            user: {
-                id: userID,
-            },
-        };
-        jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
-            if (error) throw error;
+            // TODO Update item in ToDo's table
+            await ToDo.findByIdAndUpdate(id, updates, options);
 
-            return res.status(200).json({
-                status: true,
-                token,
-                message: 'ToDo deleted successfully.',
+            // TODO Return JWT
+            const payload = {
+                user: {
+                    id: userID,
+                },
+            };
+            jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
+                if (error) throw error;
+
+                return res.status(200).json({
+                    status: true,
+                    token,
+                    message: 'ToDo deleted successfully.',
+                });
             });
-        });
-    } catch (error) {
-        console.log(`${error.message}`.red);
+        } catch (error) {
+            console.log(`${error.message}`.red);
 
-        return res.status(500).json({
-            status: false,
-            message: 'Internal server error!',
-        });
+            return res.status(500).json({
+                status: false,
+                message: 'Internal server error!',
+            });
+        }
     }
-});
+);
 
 /**
  * @type          DELETE
