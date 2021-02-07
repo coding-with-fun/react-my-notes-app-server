@@ -70,4 +70,45 @@ router.post(
     }
 );
 
+/**
+ * @type          DELETE
+ * @route         /todo/delete?id=:id
+ * @description   Delete ToDo item
+ * @access        Private
+ */
+router.delete('/delete', userAuth, async (req, res) => {
+    try {
+        const { id } = req.query;
+        const userID = req.user.id;
+
+        // TODO Add new ToDo item to user's table
+        const updatedUser = await User.findByIdAndUpdate(userID, {
+            $pull: { todoList: id },
+        });
+
+        // TODO Return JWT
+        const payload = {
+            user: {
+                id: updatedUser._id,
+            },
+        };
+        jwt.sign(payload, process.env.JWT_SECRET, (error, token) => {
+            if (error) throw error;
+
+            return res.status(200).json({
+                status: true,
+                token,
+                message: 'ToDo deleted successfully.',
+            });
+        });
+    } catch (error) {
+        console.log(`${error.message}`.red);
+
+        return res.status(500).json({
+            status: false,
+            message: 'Internal server error!',
+        });
+    }
+});
+
 module.exports = router;
