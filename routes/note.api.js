@@ -26,7 +26,7 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     status: false,
-                    message: errors.errors[0].msg,
+                    body: errors.errors[0],
                 });
             }
 
@@ -87,7 +87,7 @@ router.put(
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     status: false,
-                    message: errors.errors[0].msg,
+                    body: errors.errors[0],
                 });
             }
 
