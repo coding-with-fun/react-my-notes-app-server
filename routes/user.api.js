@@ -10,6 +10,31 @@ const User = require('../models/user.model');
 const userAuth = require('../middleware/auth');
 
 /**
+ * @type          GET
+ * @route         /user/details
+ * @description   Get user details
+ * @access        Private
+ */
+router.get('/details', userAuth, async (req, res) => {
+    try {
+        const userID = req.user.id;
+        const user = await User.findById(userID).select({ password: 0 });
+
+        return res.status(200).json({
+            status: true,
+            data: user,
+            message: 'User details fetched successfully.',
+        });
+    } catch (error) {
+        console.log(`${error.message}`.red);
+        return res.status(500).json({
+            status: false,
+            message: 'Internal server error!!',
+        });
+    }
+});
+
+/**
  * @type          PATCH
  * @route         /user/update
  * @description   Update user
@@ -53,6 +78,7 @@ router.patch('/update', userAuth, async (req, res) => {
         });
     } catch (error) {
         console.log(`${error.message}`.red);
+
         return res.status(500).json({
             status: false,
             message: 'Internal server error!!',

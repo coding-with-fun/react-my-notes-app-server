@@ -32,6 +32,9 @@ router.post(
             const { content } = req.body;
             const userID = req.user.id;
             const options = {
+                fields: {
+                    password: 0,
+                },
                 new: true,
             };
 
@@ -50,10 +53,9 @@ router.post(
                 options
             ).populate('todoList', '_id content isCompleted');
 
-            console.log(newUserData);
-
             return res.status(200).json({
                 status: true,
+                data: newUserData,
                 message: 'New ToDo added successfully.',
             });
         } catch (error) {
