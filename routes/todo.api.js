@@ -61,6 +61,7 @@ router.post(
                     status: true,
                     data: {
                         token,
+                        todoData: newToDo,
                         message: 'New ToDo added successfully.',
                     },
                 });
